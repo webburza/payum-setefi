@@ -46,7 +46,7 @@ class SetefiGatewayFactory extends GatewayFactory
             $config['payum.required_options'] = ['terminal_id', 'terminal_password', 'sandbox'];
 
             $config['payum.api'] = function (ArrayObject $config) {
-                $config->validateNotEmpty($config['payum.required_options']);
+                $config->validatedKeysSet($config['payum.required_options']);
 
                 return new Api((array) $config, $config['payum.http_client'], $config['httplug.message_factory']);
             };
