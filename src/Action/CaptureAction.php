@@ -63,7 +63,7 @@ class CaptureAction implements ActionInterface, ApiAwareInterface, GatewayAwareI
             // we're need to create the transaction on Setefi
             // and redirect the user there
             $this->gateway->execute(new CreateTransaction($details));
-        } elseif (null === $details['authorization']) {
+        } elseif (null === $details['authorization'] && null === $details['cancellation']) {
             // second pass
             // we're authorizing the transaction by a server-to-server request
             // this request is served to Setefi backend, NOT the returning user

@@ -31,6 +31,7 @@ class Api
     const PROPERTY_SECURITY_TOKEN = 'securitytoken';
 
     const STATUS_SUCCESS = '000';
+    const STATUS_CANCELED = '-1';
 
     private static $currencies = [
         self::CURRENCY_GBP => '826',
@@ -96,6 +97,12 @@ class Api
     {
         $payment = Payment::fromArray($model['payment']);
         $authorization = PaymentAuthorization::fromSetefiResponse($authorizationRequest);
+
+        if (true === $authorization->isCanceled()) {
+            $model['cancellation'] = $authorization->toArray();
+
+            return $model;
+        }
 
         if (false === $payment->isMatchingAuthorization($authorization)) {
             throw new InvalidArgumentException('Invalid payment authorization');
