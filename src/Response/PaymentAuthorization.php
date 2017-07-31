@@ -22,18 +22,18 @@ class PaymentAuthorization
 
     /**
      * @param string $payment
+     * @param string $result
+     * @param string $code
      * @param string $token
      * @param string $authorization
-     * @param string $code
-     * @param string $result
      */
-    public function __construct($payment, $token, $authorization, $code, $result)
+    public function __construct($payment, $result, $code, $token = null, $authorization = null)
     {
         $this->payment = $payment;
+        $this->result = $result;
+        $this->code = $code;
         $this->token = $token;
         $this->authorization = $authorization;
-        $this->code = $code;
-        $this->result = $result;
     }
 
     /**
@@ -43,13 +43,13 @@ class PaymentAuthorization
      */
     public static function fromSetefiResponse(array $response)
     {
-        return new self(
-            $response[Api::PROPERTY_PAYMENT_ID],
-            $response[Api::PROPERTY_SECURITY_TOKEN],
-            $response[Api::PROPERTY_AUTHORIZATION],
-            $response[Api::PROPERTY_RESPONSE_CODE],
-            $response[Api::PROPERTY_RESULT]
-        );
+        $payment = $response[Api::PROPERTY_PAYMENT_ID];
+        $result = $response[Api::PROPERTY_RESULT];
+        $code = isset($response[Api::PROPERTY_RESPONSE_CODE]) ? $response[Api::PROPERTY_RESPONSE_CODE] : Api::STATUS_CANCELED;
+        $token = isset($response[Api::PROPERTY_SECURITY_TOKEN]) ? $response[Api::PROPERTY_SECURITY_TOKEN] : null;
+        $authorization = isset($response[Api::PROPERTY_AUTHORIZATION]) ? $response[Api::PROPERTY_AUTHORIZATION] : null;
+
+        return new self($payment, $result, $code, $token, $authorization);
     }
 
     /**
@@ -61,10 +61,10 @@ class PaymentAuthorization
     {
         return new self(
             $array['payment'],
-            $array['token'],
-            $array['authorization'],
+            $array['result'],
             $array['code'],
-            $array['result']
+            $array['token'],
+            $array['authorization']
         );
     }
 
@@ -75,10 +75,10 @@ class PaymentAuthorization
     {
         return [
             'payment' => $this->payment,
+            'result' => $this->result,
+            'code' => $this->code,
             'token' => $this->token,
             'authorization' => $this->authorization,
-            'code' => $this->code,
-            'result' => $this->result,
         ];
     }
 
@@ -99,5 +99,13 @@ class PaymentAuthorization
     public function isValid()
     {
         return $this->code === Api::STATUS_SUCCESS;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCanceled()
+    {
+        return $this->code === Api::STATUS_CANCELED;
     }
 }

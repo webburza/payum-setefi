@@ -30,6 +30,12 @@ class StatusAction implements ActionInterface
             return;
         }
 
+        if (true === isset($model['cancellation'])) {
+            $request->markCanceled();
+
+            return;
+        }
+
         if (true === isset($model['authorization'])) {
             $authorization = PaymentAuthorization::fromArray($model['authorization']);
             if ($authorization->isValid()) {

@@ -51,14 +51,13 @@ class AuthorizeAction implements ActionInterface, GatewayAwareInterface, ApiAwar
         $this->gateway->execute($httpRequest);
 
         $authRequest = ArrayObject::ensureArrayObject($httpRequest->request);
-        $authRequest->validateNotEmpty(['paymentid', 'securitytoken', 'authorizationcode', 'responsecode', 'result']);
+        // $authRequest->validateNotEmpty(['paymentid', 'securitytoken', 'authorizationcode', 'responsecode', 'result']);
+        $authRequest->validateNotEmpty(['paymentid', 'result']);
 
         $details->replace($this->api->authorizeTransaction((array) $details, (array) $authRequest));
 
-        if ($details['authorization']) {
-            // TODO: we can communicate back with Setefi, what can we say here? Maybe a different response URL?
-            throw new HttpResponse('OK');
-        }
+        // TODO: we can communicate back with Setefi, what can we say here? Maybe a different response URL?
+        throw new HttpResponse('OK');
     }
 
     /**

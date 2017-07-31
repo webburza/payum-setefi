@@ -6,6 +6,7 @@ use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayFactory;
 use Webburza\Payum\Setefi\Action\AuthorizeAction;
 use Webburza\Payum\Setefi\Action\CaptureAction;
+use Webburza\Payum\Setefi\Action\CancelAction;
 use Webburza\Payum\Setefi\Action\ConvertPaymentAction;
 use Webburza\Payum\Setefi\Action\CreateTransactionAction;
 use Webburza\Payum\Setefi\Action\RefundAction;
@@ -31,6 +32,7 @@ class SetefiGatewayFactory extends GatewayFactory
                 'payum.action.capture' => new CaptureAction(),
                 'payum.action.authorize' => new AuthorizeAction(),
                 'payum.action.refund' => new RefundAction(),
+                'payum.action.cancel' => new CancelAction(),
                 'payum.action.status' => new StatusAction(),
                 'payum.action.convert_payment' => new ConvertPaymentAction(),
 
