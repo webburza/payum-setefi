@@ -29,6 +29,13 @@ class Api
     const PROPERTY_RESULT = 'result';
     const PROPERTY_RESPONSE_CODE = 'responsecode';
     const PROPERTY_SECURITY_TOKEN = 'securitytoken';
+    const PROPERTY_CARD_COUNTRY = 'cardcountry';
+    const PROPERTY_CARD_EXPIRY = 'cardexpirydate';
+    const PROPERTY_CARD_TYPE = 'cardtype';
+    const PROPERTY_CARD_MASKED_PAN = 'maskedpan';
+    const PROPERTY_CARD_3D_SECURE = 'threedsecure';
+    const PROPERTY_RRN = 'rrn';
+    const PROPERTY_CUSTOM_FIELD = 'customfield';
 
     const STATUS_SUCCESS = '000';
     const STATUS_CANCELED = '-1';
@@ -108,6 +115,11 @@ class Api
             throw new InvalidArgumentException('Invalid payment authorization');
         }
         $model['authorization'] = $authorization->toArray();
+
+        // append the payment ID here, as per Setefi instructions
+        $model['redirectToMerchantUrl'] .= (false === strpos($model['redirectToMerchantUrl'], '?') ? '?' : '&').http_build_query([
+            'paymentid' => $payment->getId(),
+        ]);
 
         return $model;
     }

@@ -19,6 +19,20 @@ class PaymentAuthorization
     protected $code;
     /** @var string */
     protected $result;
+    /** @var string */
+    protected $cardCountry;
+    /** @var string */
+    protected $cardExpiryDate;
+    /** @var string */
+    protected $cardType;
+    /** @var string */
+    protected $cardMaskedPan;
+    /** @var string */
+    protected $card3DSecure;
+    /** @var string */
+    protected $rrn;
+    /** @var string */
+    protected $custom;
 
     /**
      * @param string $payment
@@ -27,13 +41,32 @@ class PaymentAuthorization
      * @param string $token
      * @param string $authorization
      */
-    public function __construct($payment, $result, $code, $token = null, $authorization = null)
-    {
+    public function __construct(
+        $payment,
+        $result,
+        $code,
+        $token = null,
+        $authorization = null,
+        $cardCountry = null,
+        $cardExpiryDate = null,
+        $cardType = null,
+        $cardMaskedPan = null,
+        $card3DSecure = null,
+        $rrn = null,
+        $custom = null
+    ) {
         $this->payment = $payment;
         $this->result = $result;
         $this->code = $code;
         $this->token = $token;
         $this->authorization = $authorization;
+        $this->cardCountry = $cardCountry;
+        $this->cardExpiryDate = $cardExpiryDate;
+        $this->cardType = $cardType;
+        $this->cardMaskedPan = $cardMaskedPan;
+        $this->card3DSecure = $card3DSecure;
+        $this->rrn = $rrn;
+        $this->custom = $custom;
     }
 
     /**
@@ -49,7 +82,18 @@ class PaymentAuthorization
         $token = isset($response[Api::PROPERTY_SECURITY_TOKEN]) ? $response[Api::PROPERTY_SECURITY_TOKEN] : null;
         $authorization = isset($response[Api::PROPERTY_AUTHORIZATION]) ? $response[Api::PROPERTY_AUTHORIZATION] : null;
 
-        return new self($payment, $result, $code, $token, $authorization);
+        $cardCountry = isset($response[Api::PROPERTY_CARD_COUNTRY]) ? $response[Api::PROPERTY_CARD_COUNTRY] : null;
+        $cardExpiryDate = isset($response[Api::PROPERTY_CARD_EXPIRY]) ? $response[Api::PROPERTY_CARD_EXPIRY] : null;
+        $cardType = isset($response[Api::PROPERTY_CARD_TYPE]) ? $response[Api::PROPERTY_CARD_TYPE] : null;
+        $cardMaskedPan = isset($response[Api::PROPERTY_CARD_MASKED_PAN]) ? $response[Api::PROPERTY_CARD_MASKED_PAN] : null;
+        $card3DSecure = isset($response[Api::PROPERTY_CARD_3D_SECURE]) ? $response[Api::PROPERTY_CARD_3D_SECURE] : null;
+        $rrn = isset($response[Api::PROPERTY_RRN]) ? $response[Api::PROPERTY_RRN] : null;
+        $custom = isset($response[Api::PROPERTY_CUSTOM_FIELD]) ? $response[Api::PROPERTY_CUSTOM_FIELD] : null;
+
+        return new self(
+            $payment, $result, $code, $token, $authorization,
+            $cardCountry, $cardExpiryDate, $cardType, $cardMaskedPan, $card3DSecure, $rrn, $custom
+        );
     }
 
     /**
@@ -64,7 +108,14 @@ class PaymentAuthorization
             $array['result'],
             $array['code'],
             $array['token'],
-            $array['authorization']
+            $array['authorization'],
+            $array['cardCountry'],
+            $array['cardExpiryDate'],
+            $array['cardType'],
+            $array['cardMaskedPan'],
+            $array['card3DSecure'],
+            $array['rrn'],
+            $array['custom']
         );
     }
 
@@ -79,6 +130,13 @@ class PaymentAuthorization
             'code' => $this->code,
             'token' => $this->token,
             'authorization' => $this->authorization,
+            'cardCountry' => $this->cardCountry,
+            'cardExpiryDate' => $this->cardExpiryDate,
+            'cardType' => $this->cardType,
+            'cardMaskedPan' => $this->cardMaskedPan,
+            'card3DSecure' => $this->card3DSecure,
+            'rrn' => $this->rrn,
+            'custom' => $this->custom,
         ];
     }
 

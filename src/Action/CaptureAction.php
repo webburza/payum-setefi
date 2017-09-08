@@ -9,8 +9,8 @@ use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
-use Payum\Core\Request\Authorize;
 use Payum\Core\Request\Capture;
+use Payum\Core\Request\Notify;
 use Webburza\Payum\Setefi\Api;
 use Webburza\Payum\Setefi\Request\CreateTransaction;
 
@@ -49,14 +49,21 @@ class CaptureAction implements ActionInterface, ApiAwareInterface, GatewayAwareI
         if (null === $details['payment']) {
             // TODO: hardcoded for now
             $details['language'] = Api::LANGUAGE_ITA;
-            if (null === $details['responseToMerchantUrl'] && $request->getToken()) {
-                // server to server sync
-                $details['responseToMerchantUrl'] = $request->getToken()->getTargetUrl();
-            }
-            if (null === $details['recoveryUrl'] && $request->getToken()) {
-                // if our server to server fails, this way we'll still try to sync
-                // otherwise just redirect to success
-                $details['recoveryUrl'] = $request->getToken()->getTargetUrl();
+            if ($request->getToken()) {
+                if (null === $details['responseToMerchantUrl']) {
+                    // server to server sync
+                    $details['responseToMerchantUrl'] = $request->getToken()->getTargetUrl();
+                }
+                if (null === $details['redirectToMerchantUrl']) {
+                    // this is where the user gets redirected after a successful server-to-server sync
+                    // this will get a payment ID appended after we get it
+                    $details['redirectToMerchantUrl'] = $request->getToken()->getTargetUrl();
+                }
+                if (null === $details['recoveryUrl']) {
+                    // if our server to server fails, this way we'll still try to sync
+                    // otherwise just redirect to success
+                    $details['recoveryUrl'] = $request->getToken()->getTargetUrl();
+                }
             }
 
             // first pass
@@ -67,7 +74,7 @@ class CaptureAction implements ActionInterface, ApiAwareInterface, GatewayAwareI
             // second pass
             // we're authorizing the transaction by a server-to-server request
             // this request is served to Setefi backend, NOT the returning user
-            $this->gateway->execute(new Authorize($details));
+            $this->gateway->execute(new Notify($details));
         }
     }
 
