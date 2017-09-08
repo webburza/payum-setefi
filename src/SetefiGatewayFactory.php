@@ -4,7 +4,7 @@ namespace Webburza\Payum\Setefi;
 
 use Payum\Core\Bridge\Spl\ArrayObject;
 use Payum\Core\GatewayFactory;
-use Webburza\Payum\Setefi\Action\AuthorizeAction;
+use Webburza\Payum\Setefi\Action\NotifyAction;
 use Webburza\Payum\Setefi\Action\CaptureAction;
 use Webburza\Payum\Setefi\Action\CancelAction;
 use Webburza\Payum\Setefi\Action\ConvertPaymentAction;
@@ -30,7 +30,7 @@ class SetefiGatewayFactory extends GatewayFactory
                 'payum.factory_name' => 'setefi',
                 'payum.factory_title' => 'Setefi',
                 'payum.action.capture' => new CaptureAction(),
-                'payum.action.authorize' => new AuthorizeAction(),
+                'payum.action.notify' => new NotifyAction(),
                 'payum.action.refund' => new RefundAction(),
                 'payum.action.cancel' => new CancelAction(),
                 'payum.action.status' => new StatusAction(),

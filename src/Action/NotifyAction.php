@@ -10,16 +10,16 @@ use Payum\Core\Exception\RequestNotSupportedException;
 use Payum\Core\GatewayAwareInterface;
 use Payum\Core\GatewayAwareTrait;
 use Payum\Core\Reply\HttpResponse;
-use Payum\Core\Request\Authorize;
+use Payum\Core\Request\Notify;
 use Payum\Core\Request\GetHttpRequest;
 use Webburza\Payum\Setefi\Api;
 
 /**
- * Class AuthorizeAction.
+ * Class NotifyAction.
  *
  * @property Api $api
  */
-class AuthorizeAction implements ActionInterface, GatewayAwareInterface, ApiAwareInterface
+class NotifyAction implements ActionInterface, GatewayAwareInterface, ApiAwareInterface
 {
     use GatewayAwareTrait;
     use ApiAwareTrait;
@@ -35,7 +35,7 @@ class AuthorizeAction implements ActionInterface, GatewayAwareInterface, ApiAwar
     /**
      * {@inheritdoc}
      *
-     * @param Authorize $request
+     * @param Notify $request
      *
      * @throws \Payum\Core\Reply\HttpResponse
      * @throws \Payum\Core\Exception\LogicException
@@ -56,8 +56,7 @@ class AuthorizeAction implements ActionInterface, GatewayAwareInterface, ApiAwar
 
         $details->replace($this->api->authorizeTransaction((array) $details, (array) $authRequest));
 
-        // TODO: we can communicate back with Setefi, what can we say here? Maybe a different response URL?
-        throw new HttpResponse('OK');
+        throw new HttpResponse($details['redirectToMerchantUrl']);
     }
 
     /**
@@ -66,7 +65,7 @@ class AuthorizeAction implements ActionInterface, GatewayAwareInterface, ApiAwar
     public function supports($request)
     {
         return
-            $request instanceof Authorize &&
+            $request instanceof Notify &&
             $request->getModel() instanceof \ArrayAccess;
     }
 }
