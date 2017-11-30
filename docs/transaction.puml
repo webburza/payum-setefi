@@ -1,0 +1,29 @@
+@startuml
+autonumber
+
+group Create transaction: Payment ID
+    Payum o--> Setefi: CreateTransaction request (S2S)
+    Payum o<-- Setefi: CreateTransaction response (S2S)\n
+    note left: adds "payment" info
+end
+
+group Capture payment: payment process
+    Payum ->o Setefi: Payment
+    note right: redirect, with payment ID from 2
+    ...user fills out form...
+    alt successful payment
+        Payum <--o Setefi: Notify request (S2S)
+        note left: adds "authorization" info
+    else canceled payment
+        Payum <--o Setefi: Notify request (S2S)\n
+        note left: adds "cancellation" info
+    end
+    Payum --->o Setefi: Notify response (S2S)
+    note right: responds where to redirect the user to
+    Payum o<- Setefi: Payment redirect, returns user
+    note left: redirect, to URL provided in 6
+
+
+end
+
+@enduml
